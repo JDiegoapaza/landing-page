@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PSICO-PEN — Sistema de Gestión Psicológica Penitenciaria">
+    <title>PSICO-PEN | Acceso al Sistema</title>
+
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Estilos propios -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Estilos de apoyo exclusivos del login */
+        .login-bg-shapes { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+        .shape {
+            position: absolute;
+            border: 1px solid rgba(0,212,255,.08);
+            border-radius: 50%;
+            animation: rotateSlow linear infinite;
+        }
+        .shape-1 { width:700px;height:700px; top:-200px;left:-200px; animation-duration:60s; }
+        .shape-2 { width:500px;height:500px; bottom:-150px;right:-150px; animation-duration:45s; animation-direction:reverse; }
+        .shape-3 { width:300px;height:300px; top:50%;left:60%; animation-duration:35s; }
+        @keyframes rotateSlow { to { transform: rotate(360deg); } }
+
+        /* Lines decorativas */
+        .deco-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,212,255,.2), transparent);
+            width: 60%;
+            animation: scanLine 8s ease-in-out infinite;
+        }
+        .deco-line-1 { top: 25%; left: 20%; animation-delay: 0s; }
+        .deco-line-2 { top: 60%; left: 10%; animation-delay: 3s; width: 50%; }
+        .deco-line-3 { top: 80%; left: 30%; animation-delay: 6s; width: 40%; }
+        @keyframes scanLine {
+            0%, 100% { opacity: 0; transform: scaleX(0); }
+            50%       { opacity: 1; transform: scaleX(1); }
+        }
+
+        /* Status bar superior */
+        .status-bar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #0077b6, #00d4ff, #7c3aed, #00d4ff, #0077b6);
+            background-size: 300% 100%;
+            animation: statusGlow 4s ease-in-out infinite;
+            z-index: 100;
+        }
+        @keyframes statusGlow {
+            0%, 100% { background-position: 0% 0; }
+            50%       { background-position: 100% 0; }
+        }
+
+        /* Tip de credenciales (solo para prototipo) */
+        .dev-hint {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(14,28,52,.90);
+            border: 1px solid rgba(0,212,255,.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #8ba3c1;
+            font-size: .72rem;
+            max-width: 230px;
+            backdrop-filter: blur(10px);
+            z-index: 200;
+            line-height: 1.7;
+        }
+        .dev-hint b { color: var(--accent-dark, #0097b2); }
+        .dev-hint-title {
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(0,212,255,.6);
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body class="login-page">
+
+    <!-- Barra de estado superior -->
+    <div class="status-bar"></div>
+
+    <!-- Fondo animado -->
+    <div class="login-bg">
+        <div id="particleContainer" class="login-grid"></div>
+        <div class="login-bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="deco-line deco-line-1"></div>
+            <div class="deco-line deco-line-2"></div>
+            <div class="deco-line deco-line-3"></div>
+        </div>
+    </div>
+
+    <!-- Wrapper del login -->
+    <div class="login-wrapper animate__animated animate__fadeInDown animate__faster">
+
+        <div class="login-card">
+
+            <!-- ── Encabezado institucional ── -->
+            <div class="login-header">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                </div>
+
+                <div class="system-badge">
+                    <i class="fas fa-shield-halved me-1"></i>Sistema Institucional Oficial
+                </div>
+
+                <h1 class="system-title">PSICO-PEN</h1>
+
+                <p class="system-subtitle">
+                    Plataforma Inteligente de Gestión de<br>
+                    Evaluaciones Psicológicas Penitenciarias
+                </p>
+
+                <p class="system-location">
+                    <i class="fas fa-map-marker-alt me-1"></i>
+                    Centros Penitenciarios — La Paz, Bolivia
+                </p>
+            </div>
+
+            <!-- ── Formulario de acceso ── -->
+            <div class="login-body">
+                <form id="loginForm" novalidate autocomplete="off">
+
+                    <!-- Usuario -->
+                    <div class="form-group mb-3">
+                        <label for="username" class="form-label">
+                            <i class="fas fa-user-shield me-2"></i>Usuario institucional
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon"><i class="fas fa-user"></i></span>
+                            <input
+                                type="text"
+                                class="form-control custom-input"
+                                id="username"
+                                placeholder="Ingrese su usuario"
+                                autocomplete="username"
+                                tabindex="1"
+                            >
+                        </div>
+                        <div class="invalid-feedback-custom" id="usernameError">
+                            <i class="fas fa-exclamation-circle me-1"></i>El usuario es obligatorio
+                        </div>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="form-group mb-3">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock me-2"></i>Contraseña
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon"><i class="fas fa-lock"></i></span>
+                            <input
+                                type="password"
+                                class="form-control custom-input"
+                                id="password"
+                                placeholder="Ingrese su contraseña"
+                                autocomplete="current-password"
+                                tabindex="2"
+                            >
+                            <button type="button" class="toggle-password" id="togglePassword" tabindex="-1" aria-label="Mostrar/Ocultar contraseña">
+                                <i class="fas fa-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback-custom" id="passwordError">
+                            <i class="fas fa-exclamation-circle me-1"></i>La contraseña es obligatoria
+                        </div>
+                    </div>
+
+                    <!-- Opciones -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rememberMe" tabindex="3">
+                            <label class="form-check-label" for="rememberMe">Recordar sesión</label>
+                        </div>
+                        <a href="#" class="forgot-link" onclick="forgotPassword(event)">
+                            ¿Olvidó su contraseña?
+                        </a>
+                    </div>
+
+                    <!-- Botón ingresar -->
+                    <button type="submit" class="btn btn-login w-100" id="loginBtn" tabindex="4">
+                        <span class="btn-text">
+                            <i class="fas fa-sign-in-alt me-2"></i>Ingresar al Sistema
+                        </span>
+                        <span class="btn-loading d-none">
+                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                            Verificando credenciales...
+                        </span>
+                    </button>
+
+                </form>
+            </div>
+
+            <!-- ── Pie del login ── -->
+            <div class="login-footer">
+                <div class="security-badges">
+                    <span class="badge-security"><i class="fas fa-shield-alt"></i>ISO 27001</span>
+                    <span class="badge-security"><i class="fas fa-lock"></i>SSL 256-bit</span>
+                    <span class="badge-security"><i class="fas fa-eye-slash"></i>Datos Cifrados</span>
+                    <span class="badge-security"><i class="fas fa-fingerprint"></i>Auditoría</span>
+                </div>
+                <p class="footer-text">
+                    &copy; 2024 PSICO-PEN &nbsp;|&nbsp; Ministerio de Justicia y Transparencia Institucional — Bolivia
+                </p>
+                <p class="footer-version">
+                    v2.4.1 &nbsp;|&nbsp;
+                    <i class="fas fa-circle text-success" style="font-size:.5rem;vertical-align:middle"></i>
+                    Servidor operativo &nbsp;|&nbsp; Acceso restringido al personal autorizado
+                </p>
+            </div>
+
+        </div><!-- /login-card -->
+    </div><!-- /login-wrapper -->
+
+    <!-- Credenciales de demostración (solo prototipo) -->
+    <div class="dev-hint">
+        <div class="dev-hint-title"><i class="fas fa-key me-1"></i>Acceso Demo</div>
+        <b>admin</b> / admin123<br>
+        <b>psicologa</b> / psico2024<br>
+        <b>director</b> / director2024
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function forgotPassword(e) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'info',
+                title: 'Recuperación de Contraseña',
+                html: 'Contacte al administrador del sistema:<br><b>soporte@psicopen.gob.bo</b><br><small style="color:#8ba3c1">Interno: 3421 | Ext. 201</small>',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#0077b6',
+                background: '#0f1d35',
+                color: '#e2e8f0',
+            });
+        }
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
